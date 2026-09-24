@@ -1,0 +1,5 @@
+# エージェント設定（APIキー等を含むため除外）
+.agents/
+
+# proxy-server の node_modules
+proxy-server/node_modules/
