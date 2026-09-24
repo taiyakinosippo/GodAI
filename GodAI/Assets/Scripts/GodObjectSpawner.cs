@@ -20,6 +20,17 @@ public class GodObjectSpawner : MonoBehaviour
     [Tooltip("輪郭検出の詳細度（0〜1、小さいほど粗い）")]
     [SerializeField] private float detail = 0.05f;
 
+    [Header("スケール制限 (神様の暴走を抑制)")]
+    [Tooltip("最小スケール")]
+    [SerializeField] private float minScale = 0.5f;
+
+    [Tooltip("最大スケール（神様が999999を返しても4.0に制限）")]
+    [SerializeField] private float maxScale = 4.0f;
+
+    [Tooltip("質量の上限(kg)")]
+    [SerializeField] private float maxMass = 100f;
+
+
     /// <summary>
     /// 指定した Texture2D・GodItemData・スポーン位置からゲームオブジェクトを生成する。
     /// </summary>
@@ -41,7 +52,11 @@ public class GodObjectSpawner : MonoBehaviour
         // ---- 2. ゲームオブジェクト生成 ----
         GameObject obj = new GameObject(string.IsNullOrEmpty(itemData.itemName) ? "GodObject" : itemData.itemName);
         obj.transform.position   = spawnPosition;
-        obj.transform.localScale = Vector3.one * Mathf.Max(0.1f, itemData.scale); // 最低0.1倍を保証
+        // スケールを安全な範囲にクランプ（神様が暴走しても画面内に収まるサイズに制限）
+        float clampedScale = Mathf.Clamp(itemData.scale, minScale, maxScale);
+        if (!Mathf.Approximately(itemData.scale, clampedScale))
+            Debug.Log($"[GodObjectSpawner] スケール制限: {itemData.scale} → {clampedScale}");
+        obj.transform.localScale = Vector3.one * clampedScale;
 
         // ---- 3. SpriteRenderer ----
         SpriteRenderer sr = obj.AddComponent<SpriteRenderer>();
@@ -55,13 +70,13 @@ public class GodObjectSpawner : MonoBehaviour
 
         // ---- 5. Rigidbody2D ----
         Rigidbody2D rb = obj.AddComponent<Rigidbody2D>();
-        rb.mass                   = Mathf.Max(0.1f, itemData.mass); // 最低0.1kgを保証
+        rb.mass                   = Mathf.Clamp(itemData.mass, 0.1f, maxMass);
         rb.gravityScale           = gravityScale;
         rb.linearDamping          = linearDrag;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         rb.interpolation          = RigidbodyInterpolation2D.Interpolate;
 
-        Debug.Log($"[GodObjectSpawner] スポーン: {itemData.itemName} / scale={itemData.scale} / mass={itemData.mass}kg");
+        Debug.Log($"[GodObjectSpawner] スポーン: {itemData.itemName} / scale={clampedScale}(元:{itemData.scale}) / mass={Mathf.Clamp(itemData.mass, 0.1f, maxMass)}kg");
         return obj;
     }
 
