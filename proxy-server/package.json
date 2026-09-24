@@ -1,0 +1,6 @@
+{
+  "name": "godai-gemini-proxy",
+  "version": "1.0.0",
+  "description": "GodAI — Gemini API Key Proxy (Vercel)",
+  "private": true
+}
