@@ -15,8 +15,11 @@ using UnityEngine.UI;
 public class GodManager : MonoBehaviour
 {
     [Header("Proxy設定")]
-    [Tooltip("Cloud Functions のデプロイ後に発行される URL\n例: https://asia-northeast1-xxx.cloudfunctions.net/gemini-proxy")]
+    [Tooltip("Gemini Proxy URL")]
     [SerializeField] private string proxyUrl = "https://god-ai-blush.vercel.app/api/gemini-proxy";
+
+    [Tooltip("Image Proxy URL（Hugging Face経由ドット絵生成）")]
+    [SerializeField] private string imageProxyUrl = "https://god-ai-blush.vercel.app/api/image-proxy";
 
     [Header("依存コンポーネント")]
     [SerializeField] private GeminiRequester       geminiRequester;
@@ -46,6 +49,10 @@ public class GodManager : MonoBehaviour
         // GeminiRequester に Proxy URL を渡す
         if (geminiRequester != null)
             geminiRequester.proxyUrl = proxyUrl;
+
+        // PollinationsDownloader に Image Proxy URL を渡す
+        if (pollinationsDownloader != null)
+            pollinationsDownloader.imageProxyUrl = imageProxyUrl;
 
         // ボタンに非同期リスナーを登録
         submitButton.onClick.AddListener(async () => await ExecuteGodMiracle());
