@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
     '"scale":2.0,"mass":30.0,"godMessage":"神様のセリフ（日本語可）"}';
 
   const geminiUrl =
-    `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
   const payload = {
     system_instruction: { parts: [{ text: systemInstruction }] },
